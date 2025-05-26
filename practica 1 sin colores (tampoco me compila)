@@ -2,7 +2,6 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
-
 using namespace std;
 
 string toLower(string str) {
@@ -22,7 +21,7 @@ int main() {
         }
 
         do {
-            cout << "Ingrese la palabra o carácter a buscar: ";
+            cout << "Ingrese la palabra o letra: ";
             getline(cin, buscar);
         } while (buscar.empty());
 
@@ -43,14 +42,15 @@ int main() {
             cout << lineaOriginal << endl;
         }
 
-        cout << "\nTotal de coincidencias: " << total << endl;
+        cout << "\ntotal de coincidencias: " << total << endl;
 
         archivo.close();
 
-        cout << "\n¿Desea buscar otra palabra? (S/N): ";
+        cout << "\nÂ¿Deseas buscar otra palabra? (S/N): ";
         getline(cin, respuesta);
 
     } while (respuesta == "S" || respuesta == "s");
 
+    cout<< "Vuelve cuando el barcelona gane." << endl;
     return 0;
 }
