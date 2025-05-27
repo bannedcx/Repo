@@ -1,56 +1,72 @@
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <algorithm>
+#include <fstream> 
+#include <string> 
+#include <algorithm> 
+
 using namespace std;
 
-string toLower(string str) {
-    transform(str.begin(), str.end(), str.begin(), ::tolower);
-    return str;
+string toLowerCase(const string &str) {
+    string lowerStr = str;
+    transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+    return lowerStr;
 }
 
 int main() {
-    string buscar;
-    string respuesta;
+    char option;  
 
     do {
-        ifstream archivo("archivo.txt");
+        string word;
+        int totalEncontradas = 0;
+        bool encontrada = false;
+
+        cout << "Ingrese la palabra a buscar: ";
+        cin >> word;
+        word = toLowerCase(word);
+
+        ifstream archivo("Archivo.txt");
         if (!archivo) {
-            cout << "No se pudo abrir el archivo." << endl;
+            cout << "Error al abrir el archivo." << endl;
             return 1;
         }
 
-        do {
-            cout << "Ingrese la palabra o letra: ";
-            getline(cin, buscar);
-        } while (buscar.empty());
+        cout << "Contenido del archivo:\n";
 
         string linea;
-        int total = 0;
-
         while (getline(archivo, linea)) {
-            string lineaOriginal = linea;
-            string lineaMin = toLower(linea);
-            string buscarMin = toLower(buscar);
+            string lowerLinea = toLowerCase(linea);
+            size_t pos = lowerLinea.find(word);
+            size_t lastPos = 0;
+            bool found = false;
 
-            size_t pos = 0;
-            while ((pos = lineaMin.find(buscarMin, pos)) != string::npos) {
-                total++;
-                pos += buscarMin.length();
+            while (pos != string::npos) {
+                found = true;
+                totalEncontradas++;
+
+                cout << linea.substr(lastPos, pos - lastPos);
+
+                lastPos = pos + word.length();
+                pos = lowerLinea.find(word, lastPos);
             }
 
-            cout << lineaOriginal << endl;
+            cout << linea.substr(lastPos) << endl;
+
+            if (found) {
+                encontrada = true;
+            }
         }
 
-        cout << "\ntotal de coincidencias: " << total << endl;
+        archivo.close();  
 
-        archivo.close();
+        if (!encontrada) {
+            cout << "La palabra no se encuentra en el archivo." << endl;
+        } else {
+            cout << "total de coincidencisd encontradas para '" << word << "': " << totalEncontradas << endl;
+        }
 
-        cout << "\n¿Deseas buscar otra palabra? (S/N): ";
-        getline(cin, respuesta);
+        cout << "¿deseas buscar mas palabras? (S/N): ";
+        cin >> option;
 
-    } while (respuesta == "S" || respuesta == "s");
-
-    cout<< "Vuelve cuando el barcelona gane." << endl;
+    } while (option == 'S' || option == 's');
+	     
     return 0;
 }
