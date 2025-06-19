@@ -1,0 +1,116 @@
+#include <iostream>
+#include <vector>
+#include <cstring>
+#include <fstream>
+#include <sstream>
+
+using namespace std;
+
+struct Producto {
+    int codigo;
+    char nombre[30];
+    float precio;
+    int stock;
+    char categoria[30];
+    bool activo;
+};
+
+vector<Producto> productos;
+const char* archivoBinario = "productos.dat";
+
+// Función para leer enteros de forma segura
+int leerEntero(const char* mensaje) {
+    string linea;
+    int valor;
+    while (true) {
+        cout << mensaje;
+        getline(cin, linea);
+        stringstream ss(linea);
+        if (ss >> valor && ss.eof()) {
+            return valor;
+        }
+        cout << "Ingrese un numero valido.\n";
+    }
+}
+
+// Función para leer flotantes de forma segura
+float leerFloat(const char* mensaje) {
+    string linea;
+    float valor;
+    while (true) {
+        cout << mensaje;
+        getline(cin, linea);
+        stringstream ss(linea);
+        if (ss >> valor && ss.eof()) {
+            return valor;
+        }
+        cout << "Ingrese un numero valido.\n";
+    }
+}
+
+void agregarProducto() {
+    Producto p;
+    
+    p.codigo = leerEntero("Codigo: ");
+    
+    // Verificar código duplicado
+    for (int i = 0; i < productos.size(); i++) {
+        if (productos[i].codigo == p.codigo) {
+            cout << "Error: Codigo ya existe.\n";
+            return;
+        }
+    }
+    
+    cout << "Nombre: ";
+    cin.getline(p.nombre, 30);
+    p.precio = leerFloat("Precio($): ");
+    p.stock = leerEntero("Stock: ");
+    cout << "Categoria: ";
+    cin.getline(p.categoria, 30);
+    p.activo = true;
+    
+    productos.push_back(p);
+    cout << "Producto agregado.\n";
+}
+
+void mostrarProductosActivos() {
+    bool hay = false;
+    for (int i = 0; i < productos.size(); i++) {
+        if (productos[i].activo) {
+            cout << "Codigo: " << productos[i].codigo << ", Nombre: " << productos[i].nombre
+                 << ", Precio: $" << productos[i].precio << ", Stock: " << productos[i].stock
+                 << ", Categoria: " << productos[i].categoria << endl;
+            hay = true;
+        }
+    }
+    if (!hay) cout << "No hay productos activos.\n";
+}
+
+void mostrarPorCategoria() {
+    char cat[30];
+    cout << "Categoria: ";
+    cin.getline(cat, 30);
+    
+    bool encontrado = false;
+    for (int i = 0; i < productos.size(); i++) {
+        if (productos[i].activo && strcmp(productos[i].categoria, cat) == 0) {
+            cout << "Codigo: " << productos[i].codigo << ", Nombre: " << productos[i].nombre
+                 << ", Precio: $" << productos[i].precio << ", Stock: " << productos[i].stock << endl;
+            encontrado = true;
+        }
+    }
+    if (!encontrado) cout << "No se encontraron productos.\n";
+}
+
+void buscarPorCodigo() {
+    int codigo = leerEntero("Codigo a buscar: ");
+    
+    for (int i = 0; i < productos.size(); i++) {
+        if (productos[i].codigo == codigo) {
+            cout << "Codigo: " << productos[i].codigo << ", Nombre: " << productos[i].nombre
+                 << ", Precio: $" << productos[i].precio << ", Stock: " << productos[i].stock
+                 << ", Categoria: " << productos[i].categoria << endl;
+            return;
+        }
+    }
+    cout << "Producto no encontrado.\n";
