@@ -1,0 +1,92 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+class Publicacion {
+protected:
+    string titulo, autor;
+    int anio, paginas;
+public:
+    Publicacion(string t, string a, int y, int p) : titulo(t), autor(a), anio(y), paginas(p) {}
+    virtual ~Publicacion() {}
+    virtual void mostrar() = 0;
+    virtual string getTipo() = 0;
+    string getTitulo() { return titulo; }
+    int getAnio() { return anio; }
+};
+
+class Libro : public Publicacion {
+    string genero;
+public:
+    Libro(string t, string a, int y, int p, string g) : Publicacion(t, a, y, p), genero(g) {}
+    void mostrar() { 
+        cout << "LIBRO - " << titulo << " | " << autor << " | " << anio << " | " << paginas << " paginas | " << genero << endl; 
+    }
+    string getTipo() { return "Libro"; }
+};
+
+class Revista : public Publicacion {
+    int edicion;
+public:
+    Revista(string t, string a, int y, int p, int e) : Publicacion(t, a, y, p), edicion(e) {}
+    void mostrar() { 
+        cout << "REVISTA - " << titulo << " | " << autor << " | " << anio << " | " << paginas << " paginas | Edicion " << edicion << endl; 
+    }
+    string getTipo() { return "Revista"; }
+};
+
+class Periodico : public Publicacion {
+    string fecha;
+public:
+    Periodico(string t, string a, int y, int p, string f) : Publicacion(t, a, y, p), fecha(f) {}
+    void mostrar() { 
+        cout << "PERIODICO - " << titulo << " | " << autor << " | " << anio << " | " << paginas << " paginas | " << fecha << endl; 
+    }
+    string getTipo() { return "Periodico"; }
+};
+
+class Biblioteca {
+    Publicacion** catalogo;
+    int cantidad, capacidad;
+    
+    void redimensionar() {
+        Publicacion** nuevo = new Publicacion*[capacidad *= 2];
+        for(int i = 0; i < cantidad; i++) nuevo[i] = catalogo[i];
+        delete[] catalogo;
+        catalogo = nuevo;
+    }
+    
+    int leerEntero(string mensaje, int minimo, int maximo) {
+        int valor;
+        do { 
+            cout << mensaje; 
+            cin >> valor; 
+        } while(valor < minimo || valor > maximo);
+        return valor;
+    }
+    
+    string leerTexto(string mensaje) {
+        string texto;
+        cout << mensaje;
+        cin.ignore();
+        getline(cin, texto);
+        return texto;
+    }
+    
+public:
+    Biblioteca() : cantidad(0), capacidad(2) { catalogo = new Publicacion*[capacidad]; }
+    ~Biblioteca() { 
+        for(int i = 0; i < cantidad; i++) delete catalogo[i]; 
+        delete[] catalogo; 
+    }
+    
+    void agregar() {
+        cout << "\nAGREGAR PUBLICACIONES\n";
+        int tipo = leerEntero("Tipo (1=Libro, 2=Revista, 3=Periodico): ", 1, 3);
+        string titulo = leerTexto("Titulo: ");
+        string autor = leerTexto("Autor: ");
+        int anio = leerEntero("Anio (1500-2025): ", 1500, 2025);
+        int paginas = leerEntero("Paginas: ", 1, 9999);
+        
+        if(cantidad == capacidad) redimensionar();
